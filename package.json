@@ -1,0 +1,9 @@
+{
+	"name": "sample-speed-game",
+	"description": "A sample game demonstrating how to use the Speed networking library.",
+	"copyright": "Copyright © 2014, Colden Cullen",
+	"authors": [ "Colden Cullen" ],
+	"dependencies": {
+		"speed": "~master"
+	}
+}
