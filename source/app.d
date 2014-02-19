@@ -10,8 +10,6 @@ void main()
 
 	write( "Will you be hosting this match? (y/n) " );
 	bool hosting = readln()[0] == 'y';
-
-	writeln( hosting );
 	
 	auto con = Connection.open( ipToConnect, hosting, ConnectionType.TCP );
 	
