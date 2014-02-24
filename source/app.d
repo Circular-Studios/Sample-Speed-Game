@@ -11,6 +11,13 @@ TicTacToe game;
 
 void turn( shared Connection conn )
 {
+	Player winner;
+	if( ( winner = game.getWinner ) != Player.Empty )
+	{
+		writeln( winner, " has won the game!" );
+		return;
+	}
+
 	write("Where would you like to go?\nX: ");
 	int x = readln()[0..$-1].to!int;
 	write("Y: ");
@@ -21,6 +28,9 @@ void turn( shared Connection conn )
 	if( game.makeMove( m ) )
 		conn.send!Move( m, ConnectionType.TCP );
 	else writeln( "THATS NOT VALID DUMMY" );
+
+	if( ( winner = game.getWinner ) != Player.Empty )
+		writeln( winner, " has won the game!" );
 }
 
 void main()

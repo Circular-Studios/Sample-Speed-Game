@@ -35,6 +35,36 @@ public:
 		
 		return true;
 	}
+
+	Player getWinner()
+	{
+		// With help from http://rosettacode.org/wiki/Tic-tac-toe#D
+		static immutable wins = [
+			// Rows
+			[ [ 0, 0 ], [ 0, 1 ], [ 0, 2 ] ],
+			[ [ 1, 0 ], [ 1, 1 ], [ 1, 2 ] ],
+			[ [ 2, 0 ], [ 2, 1 ], [ 2, 2 ] ],
+			// Cols
+			[ [ 0, 0 ], [ 1, 0 ], [ 2, 0 ] ],
+			[ [ 0, 1 ], [ 1, 1 ], [ 2, 1 ] ],
+			[ [ 0, 2 ], [ 1, 2 ], [ 2, 2 ] ],
+			// Diags
+			[ [ 0, 0 ], [ 1, 1 ], [ 2, 2 ] ],
+			[ [ 0, 2 ], [ 1, 1 ], [ 2, 0 ] ]
+		];
+		
+		foreach( immutable win; wins )
+		{
+			immutable bw0 = board[ win[ 0 ][ 0 ] ][ win[ 0 ][ 1 ] ];
+			if( bw0 == Player.Empty )
+				continue; // Nobody wins on this one.
+			
+			if( bw0 == board[ win[ 1 ][ 0 ] ][ win[ 1 ][ 1 ] ] && bw0 == board[ win[ 2 ][ 0 ] ][ win[ 2 ][ 1 ] ] )
+				return bw0;
+		}
+		
+		return Player.Empty;
+	}
 	
 	void print()
 	{
