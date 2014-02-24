@@ -19,16 +19,17 @@ void main()
 	{
 		con.onRecieveData!float ~= f => writeln( "Recieved float: ", f );
 		con.onRecieveData!string ~= f => writeln( "Recieved string: ", f );
-		con.onRecieveText ~= msg => writeln( "Recieved text: ", msg );
 	}
 	else
 	{
 		import core.thread;
-		Thread.sleep( dur!"msecs"( 1000 ) );
+		Thread.sleep( dur!"seconds"( 1 ) );
 
 		con.send!float( 4.3f, ConnectionType.TCP );
 
 		writeln( "Sent float." );
+
+		Thread.sleep( dur!"seconds"( 1 ) );
 
 		con.send!string( "Testing!!!", ConnectionType.TCP );
 
