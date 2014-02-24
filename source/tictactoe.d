@@ -28,10 +28,10 @@ public:
 	
 	bool makeMove( Move move )
 	{
-		if( !move.valid || board[ move.x ][ move.y ] != Player.Empty )
+		if( !move.valid || board[ move.x - 1 ][ move.y - 1 ] != Player.Empty )
 			return false;
 		
-		board[ move.x ][ move.y ] = move.player;
+		board[ move.x - 1 ][ move.y - 1 ] = move.player;
 		
 		return true;
 	}

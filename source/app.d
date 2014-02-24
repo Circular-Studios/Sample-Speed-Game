@@ -49,6 +49,7 @@ void main()
 	
 	con.onRecieveData!Move ~= ( Move m )
 	{
+		writeln( "Opponent moves to: ", m.x, " ", m.y );
 		game.makeMove( m );
 		turn( con );
 	};
