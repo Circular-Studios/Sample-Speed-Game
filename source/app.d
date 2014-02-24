@@ -62,6 +62,7 @@ void main()
 		game.makeMove( m );
 		game.print();
 		turn( con );
+		game.print();
 	};
 	
 	while( true ) con.update();

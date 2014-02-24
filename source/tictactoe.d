@@ -68,14 +68,16 @@ public:
 	
 	void print()
 	{
-		for( int x = 0; x < 3; x++ )
+		for( int y = 0; y < 3; y++ )
 		{
-			for( int y = 0; y < 3; y++ )
+			for( int x = 0; x < 3; x++ )
 			{
 				if( board[x][y] == Player.X )
 					write( "X" );
 				else if ( board[x][y] == Player.O )
 					write( "O" );
+				else if( y == 2 )
+					write( " " );
 				else write( "_" );
 
 				if ( y < 2 ) write ( "|" );
