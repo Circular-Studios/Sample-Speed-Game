@@ -80,7 +80,7 @@ public:
 					write( " " );
 				else write( "_" );
 
-				if ( y < 2 ) write ( "|" );
+				if ( x < 2 ) write ( "|" );
 			}
 			write( "\n" );
 		}
