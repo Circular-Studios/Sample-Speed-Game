@@ -3,6 +3,7 @@ import speed.webconnection;
 
 import std.stdio, std.array;
 
+//*
 void main()
 {
 	write( "Enter IP address to connect to: " );
@@ -11,8 +12,32 @@ void main()
 	write( "Will you be hosting this match? (y/n) " );
 	bool hosting = readln()[0] == 'y';
 	
-	auto con = Connection.open( ipToConnect, hosting, ConnectionType.TCP );
-	
+	shared Connection con = Connection.open( ipToConnect, hosting, ConnectionType.TCP );
+	writeln( "Connected" );
+
+	if( hosting )
+	{
+		con.onRecieveData!float ~= f => writeln( "Recieved float: ", f );
+		con.onRecieveData!string ~= f => writeln( "Recieved string: ", f );
+		con.onRecieveText ~= msg => writeln( "Recieved text: ", msg );
+	}
+	else
+	{
+		import core.thread;
+		Thread.sleep( dur!"msecs"( 1000 ) );
+
+		con.send!float( 4.3f, ConnectionType.TCP );
+
+		writeln( "Sent float." );
+
+		con.send!string( "Testing!!!", ConnectionType.TCP );
+
+		writeln( "Sent message." );
+	}
+
+	while( true ) con.update();
+
+	/*
 	write( "Enter your username: " );
 	string username = readln();
 	
@@ -45,4 +70,19 @@ void main()
 		
 		con.update();
 	}
+	*/
 }
+/*/
+
+class Test1
+{
+	int x;
+}
+
+void main()
+{
+	import std.traits;
+	auto t = ClassInfo.find( fullyQualifiedName!Test1 );
+	writeln( Test1.stringof, ": ", t );
+}
+//*/
