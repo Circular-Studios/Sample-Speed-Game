@@ -12,9 +12,9 @@ TicTacToe game;
 void turn( shared Connection conn )
 {
 	write("Where would you like to go?\nX: ");
-	int x = readln().to!int;
+	int x = readln()[0..$-1].to!int;
 	write("Y: ");
-	int y = readln().to!int;
+	int y = readln()[0..$-1].to!int;
 	
 	Move m = Move(x, y, me);
 	
