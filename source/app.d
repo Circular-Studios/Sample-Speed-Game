@@ -15,6 +15,7 @@ void turn( shared Connection conn )
 	if( ( winner = game.getWinner ) != Player.Empty )
 	{
 		writeln( winner, " has won the game!" );
+		conn.close();
 		return;
 	}
 
@@ -33,7 +34,10 @@ void turn( shared Connection conn )
 	else writeln( "THATS NOT VALID DUMMY" );
 
 	if( ( winner = game.getWinner ) != Player.Empty )
+	{
 		writeln( winner, " has won the game!" );
+		conn.close();
+	}
 }
 
 void main()
@@ -67,5 +71,5 @@ void main()
 		turn( con );
 	};
 	
-	while( true ) con.update();
+	while( con.isOpen ) con.update();
 }
