@@ -4,15 +4,27 @@ import std.stdio;
 
 enum Player { X, O, Empty }
 
+struct Move
+{
+	int x;
+	int y;
+	Player player;
+
+	@property bool valid()
+	{
+		return x > 0 && x < 4 && y > 0 && y < 4;
+	}
+}
+
 class TicTacToe
 {
 public:
-	bool makeMove( Player player, int x, int y )
+	bool makeMove( Move move )
 	{
-		if( x < 1 || x > 3 || y < 1 || y > 3 )
+		if( !move.valid )
 			return false;
 
-		board[ x ][ y ] = player;
+		board[ move.x ][ move.y ] = move.player;
 
 		return true;
 	}
