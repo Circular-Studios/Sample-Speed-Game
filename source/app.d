@@ -26,10 +26,11 @@ void turn( shared Connection conn )
 	Move m = Move(x, y, me);
 	
 	if( game.makeMove( m ) )
+	{
+		game.print();
 		conn.send!Move( m, ConnectionType.TCP );
+	}
 	else writeln( "THATS NOT VALID DUMMY" );
-
-	game.print();
 
 	if( ( winner = game.getWinner ) != Player.Empty )
 		writeln( winner, " has won the game!" );
