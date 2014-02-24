@@ -68,7 +68,20 @@ public:
 	
 	void print()
 	{
-		
+		for( int x = 0; x < 3; x++ )
+		{
+			for( int y = 0; y < 3; y++ )
+			{
+				if( board[x][y] == Player.X )
+					write( "X" );
+				else if ( board[x][y] == Player.O )
+					write( "O" );
+				else write( "_" );
+
+				if ( y < 2 ) write ( "|" );
+			}
+			write( "\n" );
+		}
 	}
 	
 private:
