@@ -9,7 +9,7 @@ Player me;
 
 TicTacToe game;
 
-void turn( shared Connection conn )
+void turn( Connection conn )
 {
 	Player winner;
 	if( ( winner = game.getWinner ) != Player.Empty )
@@ -48,7 +48,7 @@ void main()
 	write( "Will you be hosting this match? (y/n) " );
 	bool hosting = readln()[0] == 'y';
 	
-	shared Connection con = Connection.open( ipToConnect, hosting, ConnectionType.TCP );
+	Connection con = Connection.open( ipToConnect, hosting, ConnectionType.TCP );
 	writeln( "Connected" );
 	
 	// instantiate ticTacToe
