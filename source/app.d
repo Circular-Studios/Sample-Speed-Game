@@ -65,9 +65,6 @@ void main()
 
 	Player[] playerList;
 	Tid spectaterListener;
-	shared Player newPlayer;
-	shared bool hasNewPlayer = false;
-	shared Mutex addNewPlayer;
 
 	if ( hosting )
 	{
@@ -86,23 +83,6 @@ void main()
 
 			playerList[0].con.send!Handshake( Handshake( numPlayers, versionNumber) );
 			// spectators go here
-
-			spectaterListener = spawn( ( ref shared bool hasNewPlayer, ref shared Player newPlayer, ref shared Mutex addNewPlayer )
-			{
-				import core.time;
-				while( !receiveTimeout( dur!"msecs"( 0 ), ( string x ) { } ) )
-				{
-					auto conn = cast(shared)Connection.open( "localhost", true, ConnectionType.TCP );
-
-					synchronized( addNewPlayer )
-					{
-						hasNewPlayer = true;
-						newPlayer.hasLoggedIn = false;
-						newPlayer.type = PlayerType.Spectator;
-						newPlayer.con = conn;
-					}
-				}
-			}, hasNewPlayer, newPlayer, addNewPlayer );
 		};
 
 		me.type = PlayerType.X;
@@ -152,15 +132,6 @@ void main()
 	{
 		while( playerList.length > 0 )
 		{
-			synchronized( addNewPlayer )
-			{
-				if( hasNewPlayer )
-				{
-					playerList ~= cast(Player)newPlayer;
-					hasNewPlayer = false;
-				}
-			}
-
 			foreach_reverse( i, player; playerList )
 			{
 				if( player.con.isOpen )
