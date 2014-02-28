@@ -108,14 +108,24 @@ void main()
 	}
 
 	writeln( "Connected" );
-
-	me.con.onRecieveData!Move ~= ( Move m )
+	if( hosting )
 	{
-		game.makeMove( m );
-		game.print();
-		turn( me.con );
-	};
-
+		playerList[0].con.onRecieveData!Move ~= ( Move m )
+		{
+			game.makeMove( m );
+			game.print();
+			turn( playerList[0].con );
+		};
+	}
+	else
+	{
+		me.con.onRecieveData!Move ~= ( Move m )
+		{
+			game.makeMove( m );
+			game.print();
+			turn( me.con );
+		};
+	}
 	if( hosting )
 	{
 		while( playerList.length > 0 )
@@ -124,7 +134,14 @@ void main()
 			{
 				if( player.con.isOpen )
 					player.con.update();
-				else playerList.remove( i );
+				else 
+				{
+					writeln( "playerList.length: ", playerList.length );
+
+					playerList = playerList.remove( i );
+					writeln( "Removing player" );
+					writeln( "playerList.length: ", playerList.length );
+				}
 			}
 		}
 	}
