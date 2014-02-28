@@ -27,19 +27,24 @@ void turn( Connection conn )
 		return;
 	}
 
-	write("Where would you like to go?\nX: ");
-	int x = readln()[0..$-1].to!int;
-	write("Y: ");
-	int y = readln()[0..$-1].to!int;
-	
-	Move m = Move(x, y, me.type);
-	
-	if( game.makeMove( m ) )
+	bool validMove = true;
+
+	Move m;
+	m.player = me.type;
+
+	do 
 	{
-		game.print();
-		conn.send!Move( m, ConnectionType.TCP );
-	}
-	else writeln( "That's not a valid move" );
+		if( !validMove )
+			writeln( "Your move is bad, and you should feel bad." );
+
+		write("Where would you like to go?\nX: ");
+		m.x = readln()[0..$-1].to!int;
+		write("Y: ");
+		m.y = readln()[0..$-1].to!int;	
+	} while( ( validMove = game.makeMove( m ) ) == false );
+
+	game.print();
+	conn.send!Move( m, ConnectionType.TCP );
 
 	if( ( winner = game.getWinner ) != PlayerType.Empty )
 	{
