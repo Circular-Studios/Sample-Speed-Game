@@ -3,6 +3,7 @@ import tictactoe;
 import speed;
 import speed.webconnection;
 
+import core.sync.mutex;
 import std.stdio, std.array, std.conv, std.algorithm, std.concurrency;
 
 Player me;
@@ -66,6 +67,7 @@ void main()
 	Tid spectaterListener;
 	shared Player newPlayer;
 	shared bool hasNewPlayer = false;
+	shared Mutex addNewPlayer;
 
 	if ( hosting )
 	{
@@ -85,18 +87,22 @@ void main()
 			playerList[0].con.send!Handshake( Handshake( numPlayers, versionNumber) );
 			// spectators go here
 
-			spectaterListener = spawn( ( ref shared bool hasNewPlayer, ref shared Player newPlayer )
+			spectaterListener = spawn( ( ref shared bool hasNewPlayer, ref shared Player newPlayer, ref shared Mutex addNewPlayer )
 			{
 				import core.time;
 				while( !receiveTimeout( dur!"msecs"( 0 ), ( string x ) { } ) )
 				{
-					newPlayer.hasLoggedIn = false;
-					newPlayer.type = PlayerType.Spectator;
+					auto conn = cast(shared)Connection.open( "localhost", true, ConnectionType.TCP );
 
-					newPlayer.con = cast(shared)Connection.open( "localhost", true, ConnectionType.TCP );
-					hasNewPlayer = true;
+					synchronized( addNewPlayer )
+					{
+						hasNewPlayer = true;
+						newPlayer.hasLoggedIn = false;
+						newPlayer.type = PlayerType.Spectator;
+						newPlayer.con = conn;
+					}
 				}
-			}, hasNewPlayer, newPlayer );
+			}, hasNewPlayer, newPlayer, addNewPlayer );
 		};
 
 		me.type = PlayerType.X;
@@ -146,10 +152,13 @@ void main()
 	{
 		while( playerList.length > 0 )
 		{
-			if( hasNewPlayer )
+			synchronized( addNewPlayer )
 			{
-				playerList ~= cast(Player)newPlayer;
-				hasNewPlayer = false;
+				if( hasNewPlayer )
+				{
+					playerList ~= cast(Player)newPlayer;
+					hasNewPlayer = false;
+				}
 			}
 
 			foreach_reverse( i, player; playerList )
