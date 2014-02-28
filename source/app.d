@@ -3,7 +3,7 @@ import tictactoe;
 import speed;
 import speed.webconnection;
 
-import std.stdio, std.array, std.conv, std.algorithm;
+import std.stdio, std.array, std.conv, std.algorithm, std.concurrency;
 
 Player me;
 int numPlayers;
@@ -63,6 +63,9 @@ void main()
 	bool hasLoggedIn;
 
 	Player[] playerList;
+	Tid spectaterListener;
+	shared Player newPlayer;
+	shared bool hasNewPlayer = false;
 
 	if ( hosting )
 	{
@@ -81,6 +84,19 @@ void main()
 
 			playerList[0].con.send!Handshake( Handshake( numPlayers, versionNumber) );
 			// spectators go here
+
+			spectaterListener = spawn( ( ref shared bool hasNewPlayer, ref shared Player newPlayer )
+			{
+				import core.time;
+				while( !receiveTimeout( dur!"msecs"( 0 ), ( string x ) { } ) )
+				{
+					newPlayer.hasLoggedIn = false;
+					newPlayer.type = PlayerType.Spectator;
+
+					newPlayer.con = cast(shared)Connection.open( "localhost", true, ConnectionType.TCP );
+					hasNewPlayer = true;
+				}
+			}, hasNewPlayer, newPlayer );
 		};
 
 		me.type = PlayerType.X;
@@ -130,10 +146,18 @@ void main()
 	{
 		while( playerList.length > 0 )
 		{
+			if( hasNewPlayer )
+			{
+				playerList ~= cast(Player)newPlayer;
+				hasNewPlayer = false;
+			}
+
 			foreach_reverse( i, player; playerList )
 			{
 				if( player.con.isOpen )
+				{
 					player.con.update();
+				}
 				else 
 				{
 					writeln( "playerList.length: ", playerList.length );
@@ -144,6 +168,8 @@ void main()
 				}
 			}
 		}
+
+		spectaterListener.send( "DONE" );
 	}
 	else
 	{
