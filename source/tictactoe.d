@@ -1,14 +1,23 @@
 ﻿module tictactoe;
 
 import std.stdio;
+import speed;
+import speed.webconnection;
 
-enum Player { X, O, Empty }
+enum PlayerType { X, O, Empty, Spectator }
+
+struct Player
+{
+	bool hasLoggedIn;
+	Connection con;
+	PlayerType type;
+}
 
 struct Move
 {
 	int x;
 	int y;
-	Player player;
+	PlayerType player;
 	
 	@property bool valid()
 	{
@@ -23,12 +32,12 @@ public:
 	{
 		foreach( ref row; board ) 
 			foreach( ref cell; row )
-				cell = Player.Empty;
+				cell = PlayerType.Empty;
 	}
 	
 	bool makeMove( Move move )
 	{
-		if( !move.valid || board[ move.x - 1 ][ move.y - 1 ] != Player.Empty )
+		if( !move.valid || board[ move.x - 1 ][ move.y - 1 ] != PlayerType.Empty )
 			return false;
 		
 		board[ move.x - 1 ][ move.y - 1 ] = move.player;
@@ -36,7 +45,7 @@ public:
 		return true;
 	}
 
-	Player getWinner()
+	PlayerType getWinner()
 	{
 		// With help from http://rosettacode.org/wiki/Tic-tac-toe#D
 		static immutable wins = [
@@ -56,14 +65,14 @@ public:
 		foreach( immutable win; wins )
 		{
 			immutable bw0 = board[ win[ 0 ][ 0 ] ][ win[ 0 ][ 1 ] ];
-			if( bw0 == Player.Empty )
+			if( bw0 == PlayerType.Empty )
 				continue; // Nobody wins on this one.
 			
 			if( bw0 == board[ win[ 1 ][ 0 ] ][ win[ 1 ][ 1 ] ] && bw0 == board[ win[ 2 ][ 0 ] ][ win[ 2 ][ 1 ] ] )
 				return bw0;
 		}
 		
-		return Player.Empty;
+		return PlayerType.Empty;
 	}
 	
 	void print()
@@ -72,9 +81,9 @@ public:
 		{
 			for( int x = 0; x < 3; x++ )
 			{
-				if( board[x][y] == Player.X )
+				if( board[x][y] == PlayerType.X )
 					write( "X" );
-				else if ( board[x][y] == Player.O )
+				else if ( board[x][y] == PlayerType.O )
 					write( "O" );
 				else if( y == 2 )
 					write( " " );
@@ -87,5 +96,5 @@ public:
 	}
 	
 private:
-	Player[3][3] board;
+	PlayerType[3][3] board;
 }
