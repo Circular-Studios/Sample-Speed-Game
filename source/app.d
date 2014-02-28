@@ -141,7 +141,15 @@ void main()
 			{
 				if( player.con.isOpen )
 				{
-					player.con.update();
+					try	
+					{
+						player.con.update();
+					}
+					catch
+					{
+						writeln( "Connection Closed" );
+						return;
+					}
 				}
 				else 
 				{
@@ -160,7 +168,15 @@ void main()
 	{
 		while( me.con.isOpen )
 		{
-			me.con.update();
+			try
+			{
+				me.con.update();
+			}
+			catch
+			{
+				writeln( "Connection Closed" );
+				return;
+			}
 		}
 	}
 }
