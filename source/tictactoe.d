@@ -9,7 +9,7 @@ enum PlayerType { X, O, Empty, Spectator }
 struct Player
 {
 	bool hasLoggedIn;
-	Connection con;
+	shared Connection con;
 	PlayerType type;
 }
 

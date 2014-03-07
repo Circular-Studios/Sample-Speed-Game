@@ -17,7 +17,7 @@ struct Handshake {
 	string currentVersion;
 }
 
-void turn( Connection conn )
+void turn( shared Connection conn )
 {
 	PlayerType winner;
 	if( ( winner = game.getWinner ) != PlayerType.Empty )

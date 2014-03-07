@@ -18,12 +18,28 @@ void startChat( string[] args )
 	else if( args[ 1 ].strip == "client" )
 	{
 		write( "Enter IP address to connect to: " );
-		string ipToConnect = readln();
+		string ipToConnect = readln().strip;
+
+		write( "Enter your username: " );
+		string username = readln().strip;
+
+		auto conn = Connection.open( ipToConnect, false, ConnectionType.TCP );
+		writeln( "Connected." );
+
+		while( true )
+		{
+			Message msg;
+			write( "Message: " );
+			msg.message = readln().strip;
+			msg.sender = username;
+
+			conn.send!Message( msg, ConnectionType.TCP );
+		}
 	}
 	else if( args[ 1 ].strip == "server" )
 	{
 		writeln( "Waiting for connection..." );
-		auto conn = Connection.open( "localhost", true, ConnectionType.TCP, ConnectionType.UDP );
+		auto conn = Connection.open( "localhost", true, ConnectionType.TCP );
 		writeln( "Waiting for messages..." );
 
 		conn.onRecieveData!Message ~= ( Message message )
@@ -32,6 +48,16 @@ void startChat( string[] args )
 		};
 
 		while( true )
-			conn.update();
+		{
+			try	
+			{
+				conn.update();
+			}
+			catch
+			{
+				writeln( "Connection Closed" );
+				return;
+			}
+		}
 	}
 }
