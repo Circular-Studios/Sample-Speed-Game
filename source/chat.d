@@ -1,13 +1,9 @@
 module chat;
-import speed, speed.webconnection;;
+import chatwindow;
+import speed;
 
 import std.stdio, std.string;
-
-struct Message
-{
-	string sender;
-	string message;
-}
+import gtk.Main;
 
 void startChat( string[] args )
 {
@@ -19,22 +15,16 @@ void startChat( string[] args )
 	{
 		write( "Enter IP address to connect to: " );
 		string ipToConnect = readln().strip;
-
+		
 		write( "Enter your username: " );
 		string username = readln().strip;
-
+		
 		auto conn = Connection.open( ipToConnect, false, ConnectionType.TCP );
-		writeln( "Connected." );
-
-		while( true )
-		{
-			Message msg;
-			write( "Message: " );
-			msg.message = readln().strip;
-			msg.sender = username;
-
-			conn.send!Message( msg, ConnectionType.TCP );
-		}
+		
+		string[] blargs;
+		Main.init( blargs );
+		new ChatApp( conn, username );
+		Main.run();
 	}
 	else if( args[ 1 ].strip == "server" )
 	{
@@ -45,6 +35,7 @@ void startChat( string[] args )
 		conn.onRecieveData!Message ~= ( Message message )
 		{
 			writeln( message.sender, "> ", message.message );
+			conn.send!Message( message, ConnectionType.TCP );
 		};
 
 		while( true )
