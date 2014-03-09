@@ -64,11 +64,8 @@ class ChatApp : MainWindow
 		connection = conn;
 		connection.onRecieveData!Message ~= ( Message msg ) {  addMessage( msg ); };
 
-		writeln( "Pre spawn ", connection.onRecieveData!Message.length );
-
 		receiveThread = spawn( ( shared Connection conn )
 		{
-			writeln( "In spawn ", conn.onRecieveData!Message.length );
 			while( true )
 			{
 				if( receiveTimeout( dur!"msecs"( 0 ), ( string s ) { } ) )

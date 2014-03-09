@@ -29,14 +29,22 @@ void startChat( string[] args )
 	else if( args[ 1 ].strip == "server" )
 	{
 		writeln( "Waiting for connection..." );
-		auto conn = Connection.open( "localhost", true, ConnectionType.TCP );
-		writeln( "Waiting for messages..." );
 
-		conn.onRecieveData!Message ~= ( Message message )
+		shared(Connection) initServerConnection()
 		{
-			writeln( message.sender, "> ", message.message );
-			conn.send!Message( message, ConnectionType.TCP );
-		};
+			auto conn = Connection.open( "localhost", true, ConnectionType.TCP );
+			writeln( "Waiting for messages..." );
+			
+			conn.onRecieveData!Message ~= ( Message message )
+			{
+				writeln( message.sender, "> ", message.message );
+				conn.send!Message( message, ConnectionType.TCP );
+			};
+
+			return conn;
+		}
+
+		auto conn = initServerConnection();
 
 		while( true )
 		{
@@ -46,8 +54,8 @@ void startChat( string[] args )
 			}
 			catch
 			{
-				writeln( "Connection Closed" );
-				return;
+				writeln( "Connection Closed. Waiting for new connection..." );
+				conn = initServerConnection();
 			}
 		}
 	}
