@@ -85,7 +85,7 @@ void main( string[] args )
 		{
 			playerList ~= Player( false, Connection.open( ipToConnect, hosting, ConnectionType.TCP), PlayerType.Empty );
 
-			playerList[0].con.onRecieveData!Handshake ~= ( Handshake h )
+			playerList[0].con.onReceiveData!Handshake ~= ( Handshake h )
 			{
 				if ( versionNumber == h.currentVersion ) 
 				{
@@ -105,7 +105,7 @@ void main( string[] args )
 			me.con = Connection.open( ipToConnect, hosting, ConnectionType.TCP );
 			me.con.send!Handshake( Handshake( numPlayers, versionNumber ), ConnectionType.TCP );
 
-			me.con.onRecieveData!Handshake ~= ( Handshake h )
+			me.con.onReceiveData!Handshake ~= ( Handshake h )
 			{
 				if ( versionNumber != h.currentVersion )
 				{
@@ -127,7 +127,7 @@ void main( string[] args )
 		writeln( "Connected" );
 		if( hosting )
 		{
-			playerList[0].con.onRecieveData!Move ~= ( Move m )
+			playerList[0].con.onReceiveData!Move ~= ( Move m )
 			{
 				game.makeMove( m );
 				game.print();
@@ -136,7 +136,7 @@ void main( string[] args )
 		}
 		else
 		{
-			me.con.onRecieveData!Move ~= ( Move m )
+			me.con.onReceiveData!Move ~= ( Move m )
 			{
 				game.makeMove( m );
 				game.print();

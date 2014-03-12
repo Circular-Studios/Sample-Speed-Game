@@ -62,7 +62,7 @@ class ChatApp : MainWindow
 
 		username = un;
 		connection = conn;
-		connection.onRecieveData!Message ~= ( Message msg ) {  addMessage( msg ); };
+		connection.onReceiveData!Message ~= ( Message msg ) {  addMessage( msg ); };
 
 		receiveThread = spawn( ( shared Connection conn )
 		{
