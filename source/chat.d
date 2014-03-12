@@ -58,33 +58,18 @@ void startChat( string[] args )
 	{
 		writeln( "Waiting for connection..." );
 
-		shared(Connection) initServerConnection()
+		auto conman = ConnectionManager.open();
+
+		conman.onNewConnection ~= ( shared Connection conn )
 		{
-			auto conn = Connection.open( "localhost", true, ConnectionType.TCP );
-			writeln( "Waiting for messages..." );
-			
+			writeln( "New connection." );
 			conn.onReceiveData!Message ~= ( Message message )
 			{
 				writeln( message.sender, "> ", message.message );
 				conn.send!Message( message, ConnectionType.TCP );
 			};
+		};
 
-			return conn;
-		}
-
-		auto conn = initServerConnection();
-
-		while( true )
-		{
-			try	
-			{
-				conn.update();
-			}
-			catch
-			{
-				writeln( "Connection Closed. Waiting for new connection..." );
-				conn = initServerConnection();
-			}
-		}
+		conman.start();
 	}
 }
