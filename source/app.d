@@ -57,9 +57,24 @@ void main( string[] args )
 {
 	if( args.length == 1 )
 	{
-		writeln( "Error: No app specified. Please pick one of the following:\n - chat\n - game" );
+		writeln( "Would you like to run the game or the chat? (type \"game\" or \"chat\") " );
+		string arg = readln().chomp;
+
+		if( arg == "game" || arg == "chat" )
+		{
+			args ~= arg;
+
+			if( arg == "chat" )
+				writeln( "Would you like to run the server or the client or the gtk-client? (type \"server\" or \"client\" or \"client-gtk\") " );
+			arg = readln().chomp;
+
+			if( arg == "server" || arg == "client" || arg == "client-gtk" )
+				args ~= arg;
+		}
+		else writeln( "You need to run either the game or chat, the program will now exit" );
 	}
-	else if( args[ 1 ].strip == "chat" )
+
+	if( args[ 1 ].strip == "chat" )
 	{
 		startChat( args[ 1..$ ] );
 	}
@@ -191,3 +206,5 @@ void main( string[] args )
 		}
 	}
 }
+
+
